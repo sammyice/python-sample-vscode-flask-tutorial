@@ -1,19 +1,37 @@
 trigger:
   branches:
     include:
-      - main
+      - main  # Ajusta al nombre de tu rama principal
 
 pool:
-  name: 'Default'  # Asegúrate de que este es el nombre correcto de tu pool
+  name: 'Default'  # Asegúrate de que este sea el pool correcto
 
 steps:
-  - task: UseDotNet@2
+  # Paso 1: Realizar el checkout del repositorio
+  - task: Checkout@1
+    displayName: 'Checkout repository'
+
+  # Paso 2: Configurar Python
+  - task: UsePythonVersion@0
     inputs:
-      packageType: 'sdk'
-      version: '6.x'
-      installationPath: $(Agent.ToolsDirectory)/dotnet
+      versionSpec: '3.x'  # Cambia esto a la versión de Python que usa tu proyecto
+      addToPath: true
+
+  # Paso 3: Instalar las dependencias del proyecto
   - script: |
-      echo "Building and testing the application"
-      dotnet build
-      dotnet test
-    displayName: 'Build and Test'
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+    displayName: 'Instalar dependencias'
+
+  # Paso 4: Ejecutar pruebas unitarias
+  - script: |
+      echo "Ejecutando pruebas"
+      pytest tests/ --junitxml=test-results.xml
+    displayName: 'Ejecutar pruebas'
+
+  # Paso 5: Publicar resultados de pruebas
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/test-results.xml'
+      testResultsFormat: 'JUnit'
+    displayName: 'Publicar resultados de pruebas'
