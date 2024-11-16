@@ -13,6 +13,27 @@ variables:
   testResultsFile: 'test-results.xml'
 
 steps:
-  - task: Checkout@1
+  - task: PowerShell@2  # Actualizamos la versión de la tarea de Checkout a la versión más reciente
     displayName: 'Checkout del repositorio'
 
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(pythonVersion)'
+      addToPath: true
+    displayName: 'Configurar Python $(pythonVersion)'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r $(requirementsFile)
+    displayName: 'Instalar dependencias'
+
+  - script: |
+      echo "Ejecutando pruebas unitarias en $(testFolder)"
+      pytest $(testFolder) --junitxml=$(testResultsFile)
+    displayName: 'Ejecutar pruebas unitarias'
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/$(testResultsFile)'
+      testResultsFormat: 'JUnit'
+    displayName: 'Publicar resultados de pruebas'
