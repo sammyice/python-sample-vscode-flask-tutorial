@@ -13,7 +13,7 @@ variables:
   testResultsFile: 'test-results.xml'
 
 steps:
-  - task: PowerShell@2  # Actualizamos la versión de la tarea de Checkout a la versión más reciente
+  - task: Checkout@1  # No es necesario especificar versión aquí
     displayName: 'Checkout del repositorio'
 
   - task: UsePythonVersion@0
