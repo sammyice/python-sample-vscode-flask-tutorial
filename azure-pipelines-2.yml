@@ -6,6 +6,12 @@ trigger:
 pool:
   name: 'Default'  # Asegúrate de que este sea el pool correcto
 
+variables:
+  pythonVersion: '3.9.6'   # Versión de Python
+  requirementsFile: 'requirements.txt'   # Archivo de dependencias
+  testFolder: 'test_test1.py'     # Carpeta de pruebas
+  testResultsFile: 'test-results.xml'    # Archivo de resultados de pruebas
+
 steps:
   # Paso 1: Realizar el checkout del repositorio
   - task: Checkout@1
@@ -14,24 +20,25 @@ steps:
   # Paso 2: Configurar Python
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.x'  # Cambia esto a la versión de Python que usa tu proyecto
+      versionSpec: '$(pythonVersion)'  # Usar la variable para especificar la versión de Python
       addToPath: true
+    displayName: 'Configurar Python $(pythonVersion)'
 
   # Paso 3: Instalar las dependencias del proyecto
   - script: |
       python -m pip install --upgrade pip
-      pip install -r requirements.txt
+      pip install -r $(requirementsFile)  # Usar la variable para el archivo de dependencias
     displayName: 'Instalar dependencias'
 
   # Paso 4: Ejecutar pruebas unitarias
   - script: |
       echo "Ejecutando pruebas"
-      pytest tests/ --junitxml=test-results.xml
+      pytest $(testFolder)/ --junitxml=$(testResultsFile)  # Usar variables para las rutas
     displayName: 'Ejecutar pruebas'
 
   # Paso 5: Publicar resultados de pruebas
   - task: PublishTestResults@2
     inputs:
-      testResultsFiles: '**/test-results.xml'
+      testResultsFiles: '**/$(testResultsFile)'  # Usar la variable para el archivo de resultados
       testResultsFormat: 'JUnit'
     displayName: 'Publicar resultados de pruebas'
