@@ -7,9 +7,9 @@ pool:
   name: 'Default'
 
 variables:
-  pythonVersion: '3.10'
+  pythonVersion: '3.9'
   requirementsFile: 'requirements.txt'
-  testFolder: 'test_test1.py'
+  testFolder: 'test'
   testResultsFile: 'test-results.xml'
 
 steps:
