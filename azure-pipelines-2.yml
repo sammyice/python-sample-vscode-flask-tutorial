@@ -7,20 +7,20 @@ pool:
   name: 'Default'  # Asegúrate de que este sea el pool correcto
 
 variables:
-  pythonVersion: '3.9.6'   # Versión de Python
-  requirementsFile: 'requirements.txt'   # Archivo de dependencias
-  testFolder: 'test_test1.py'     # Carpeta de pruebas
-  testResultsFile: 'test-results.xml'    # Archivo de resultados de pruebas
+  pythonVersion: '3.9.6'                # Versión de Python
+  requirementsFile: 'requirements.txt'  # Archivo de dependencias
+  testFolder: 'test_test1.py'           # Carpeta donde se encuentran las pruebas
+  testResultsFile: 'test-results.xml'   # Archivo para almacenar resultados de pruebas
 
 steps:
   # Paso 1: Realizar el checkout del repositorio
   - task: Checkout@1
-    displayName: 'Checkout repository'
+    displayName: 'Checkout del repositorio'
 
   # Paso 2: Configurar Python
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '$(pythonVersion)'  # Usar la variable para especificar la versión de Python
+      versionSpec: '$(pythonVersion)'  # Usar la variable definida para Python
       addToPath: true
     displayName: 'Configurar Python $(pythonVersion)'
 
@@ -32,13 +32,13 @@ steps:
 
   # Paso 4: Ejecutar pruebas unitarias
   - script: |
-      echo "Ejecutando pruebas"
-      pytest $(testFolder)/ --junitxml=$(testResultsFile)  # Usar variables para las rutas
-    displayName: 'Ejecutar pruebas'
+      echo "Ejecutando pruebas unitarias en $(testFolder)"
+      pytest $(testFolder)/ --junitxml=$(testResultsFile)  # Usar variables para pruebas y resultados
+    displayName: 'Ejecutar pruebas unitarias'
 
   # Paso 5: Publicar resultados de pruebas
   - task: PublishTestResults@2
     inputs:
-      testResultsFiles: '**/$(testResultsFile)'  # Usar la variable para el archivo de resultados
+      testResultsFiles: '**/$(testResultsFile)'  # Usar la variable para resultados
       testResultsFormat: 'JUnit'
     displayName: 'Publicar resultados de pruebas'
