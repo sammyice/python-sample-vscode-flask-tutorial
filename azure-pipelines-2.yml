@@ -9,7 +9,7 @@ pool:
 variables:
   pythonVersion: '3.9.6'
   requirementsFile: 'requirements.txt'
-  testFolder: 'test'
+  testFolder: 'test_test1.py'
   testResultsFile: 'test-results.xml'
 
 steps:
