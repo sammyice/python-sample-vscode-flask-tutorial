@@ -11,8 +11,7 @@ steps:
     displayName: 'Mostrar directorio de trabajo'
   - task: UseDotNet@2
     inputs:
-      packageType: '.py'
-      version: '3'
+      UsePythonVersion: '3.9.6'
       installationPath: $(Agent.ToolsDirectory)/dotnet
   - script: |
       echo "Building and testing the application"
