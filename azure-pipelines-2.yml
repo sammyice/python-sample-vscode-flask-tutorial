@@ -4,60 +4,53 @@ trigger:
       - main
 
 pool:
-  name: 'Default'
+  vmImage: 'windows-latest'  # Usar un agente hospedado compatible
 
 variables:
-  pythonVersion: '3.8'  # Cambiar a una versión comúnmente disponible
+  pythonVersion: '3.7'  # Cambiar a una versión comúnmente disponible
   requirementsFile: 'requirements.txt'
-  testFolder: 'tests/'  # Cambiar a un directorio de pruebas
+  testFolder: 'test_test1.py'
   testResultsFile: 'test-results.xml'
 
 steps:
-  # Paso 1: Clonar repositorio de GitHub
-  - task: CmdLine@2
-    inputs:
-      script: |
-        echo "Clonando el repositorio"
-        git clone https://$(GH_TOKEN)@github.com/sammyice/python-sample-vscode-flask-tutorial.git
-        cd your-python-repo
-    displayName: 'Hacer Checkout del repositorio en GitHub'
-    env:
-      GH_TOKEN: $(GH_TOKEN)  # Usar la variable secreta directamente en el entorno
+  # Paso 1: Verificar si el token de GitHub está disponible
+  - script: |
+      if [ -z "$GH_TOKEN" ]; then
+        echo "Error: La variable GH_TOKEN no está configurada. Verifica las variables secretas en tu pipeline.";
+        exit 1;
+      else
+        echo "El token GH_TOKEN está configurado correctamente.";
+      fi
+    displayName: 'Verificar la configuración del token GH_TOKEN'
 
-  # Paso 2: Configurar Python
+  # Paso 2: Clonar repositorio de GitHub con autenticación
+  - script: |
+      git clone https://$GH_TOKEN@github.com/sammyice/python-sample-vscode-flask-tutorial.git
+    displayName: 'Hacer Checkout del repositorio en GitHub'
+
+  # Paso 3: Configurar Python
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(pythonVersion)'
       addToPath: true
     displayName: 'Configurar Python $(pythonVersion)'
-    continueOnError: false
+    continueOnError: false  # Detener el pipeline si no encuentra la versión especificada
 
-  # Paso 3: Configurar ambiente virtual e instalar dependencias
+  # Paso 4: Instalar dependencias
   - script: |
-      python -m venv venv
-      source venv/bin/activate
       python -m pip install --upgrade pip
       pip install -r $(requirementsFile)
-    displayName: 'Configurar ambiente virtual e instalar dependencias'
+    displayName: 'Instalar dependencias'
 
-  # Paso 4: Ejecutar pruebas unitarias
+  # Paso 5: Ejecutar pruebas unitarias
   - script: |
       echo "Ejecutando pruebas unitarias en $(testFolder)"
-      source venv/bin/activate
       pytest $(testFolder) --junitxml=$(testResultsFile)
     displayName: 'Ejecutar pruebas unitarias'
 
-  # Paso 5: Publicar resultados de pruebas
+  # Paso 6: Publicar resultados de pruebas
   - task: PublishTestResults@2
     inputs:
       testResultsFiles: '**/$(testResultsFile)'
       testResultsFormat: 'JUnit'
     displayName: 'Publicar resultados de pruebas'
-
-  # Paso 6: Publicar artefactos de pruebas
-  - task: PublishPipelineArtifact@1
-    inputs:
-      targetPath: '$(System.DefaultWorkingDirectory)/$(testResultsFile)'
-      artifactName: 'TestResults'
-      publishLocation: 'Container'
-    displayName: 'Publicar artefactos de pruebas'
