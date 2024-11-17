@@ -7,10 +7,11 @@ pool:
   name: 'Default'
 
 variables:
-  pythonVersion: '3.7'  # Cambiar a una versión comúnmente disponible
+  pythonVersion: '3.10'  # Cambiar a una versión comúnmente disponible
   requirementsFile: 'requirements.txt'
   testFolder: 'test_test1.py'
   testResultsFile: 'test-results.xml'
+  GH_TOKEN: $(GH_TOKEN)  # Referencia al token GitHub almacenado en las variables secretas
 
 steps:
   # Paso 1: Clonar repositorio de GitHub
@@ -18,6 +19,8 @@ steps:
     inputs:
       script: |
         git clone https://github.com/sammyice/python-sample-vscode-flask-tutorial.git
+        # O usar token de GitHub para autenticar la descarga:
+        # git clone https://$(GH_TOKEN)@github.com/sammyice/python-sample-vscode-flask-tutorial.git
     displayName: 'Hacer Checkout del repositorio en GitHub'
 
   # Paso 2: Configurar Python
@@ -26,8 +29,6 @@ steps:
       versionSpec: '$(pythonVersion)'
       addToPath: true
     displayName: 'Configurar Python $(pythonVersion)'
-
-      # Agregar un bloque de error si la versión no está disponible
     continueOnError: false
 
   # Paso 3: Instalar dependencias
