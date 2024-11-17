@@ -9,7 +9,7 @@ pool:
 variables:
   pythonVersion: '3.8'  # Cambiar a una versión comúnmente disponible
   requirementsFile: 'requirements.txt'
-  testFolder: 'test_test1.py'
+  testFolder: 'tests/'  # Cambiar a un directorio de pruebas
   testResultsFile: 'test-results.xml'
 
 steps:
@@ -17,7 +17,7 @@ steps:
   - task: CmdLine@2
     inputs:
       script: |
-        git clone https://$(GH_TOKEN)@github.com/sammyice/python-sample-vscode-flask-tutorial.git
+        git clone -b main https://$(GH_TOKEN)@github.com/sammyice/python-sample-vscode-flask-tutorial.git
     displayName: 'Hacer Checkout del repositorio en GitHub'
     env:
       GH_TOKEN: $(GH_TOKEN)  # Usar la variable secreta directamente en el entorno
@@ -30,15 +30,18 @@ steps:
     displayName: 'Configurar Python $(pythonVersion)'
     continueOnError: false
 
-  # Paso 3: Instalar dependencias
+  # Paso 3: Configurar ambiente virtual e instalar dependencias
   - script: |
+      python -m venv venv
+      source venv/bin/activate
       python -m pip install --upgrade pip
       pip install -r $(requirementsFile)
-    displayName: 'Instalar dependencias'
+    displayName: 'Configurar ambiente virtual e instalar dependencias'
 
   # Paso 4: Ejecutar pruebas unitarias
   - script: |
       echo "Ejecutando pruebas unitarias en $(testFolder)"
+      source venv/bin/activate
       pytest $(testFolder) --junitxml=$(testResultsFile)
     displayName: 'Ejecutar pruebas unitarias'
 
@@ -48,3 +51,11 @@ steps:
       testResultsFiles: '**/$(testResultsFile)'
       testResultsFormat: 'JUnit'
     displayName: 'Publicar resultados de pruebas'
+
+  # Paso 6: Publicar artefactos de pruebas
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(System.DefaultWorkingDirectory)/$(testResultsFile)'
+      artifactName: 'TestResults'
+      publishLocation: 'Container'
+    displayName: 'Publicar artefactos de pruebas'
