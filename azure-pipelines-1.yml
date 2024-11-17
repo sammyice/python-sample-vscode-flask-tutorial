@@ -3,6 +3,7 @@ trigger:
 
 pool:
   name: 'Default'
+  vmImage: 'windows-latest'
 
 strategy:
   matrix:
@@ -12,6 +13,10 @@ strategy:
       python.version: '3.11'
     Python312:
       python.version: '3.12'
+
+variables:
+  GH_TOKEN: $(GH_TOKEN)  # Variable secreta para el token de GitHub
+
 
 steps:
   - task: UsePythonVersion@0
