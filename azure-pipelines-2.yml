@@ -15,7 +15,7 @@ variables:
 steps:
   - task: CmdLine@2
     inputs:
-     script: 'git clone https://sandracardona187362@dev.azure.com/sandracardona187362/Primer%20Pipeline/_git/Primer%20Pipeline'
+     script: 'git clone https://github.com/sammyice/python-sample-vscode-flask-tutorial.git'
     displayName: 'Hacer Checkout del repositorio'
 
 
