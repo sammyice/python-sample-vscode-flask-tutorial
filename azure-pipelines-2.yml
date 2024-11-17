@@ -11,17 +11,16 @@ variables:
   requirementsFile: 'requirements.txt'
   testFolder: 'test_test1.py'
   testResultsFile: 'test-results.xml'
-  GH_TOKEN: $(GH_TOKEN)  # Referencia al token GitHub almacenado en las variables secretas
 
 steps:
-  # Paso 1: Clonar repositorio de GitHub
+  # Paso 1: Clonar repositorio de GitHub usando el token
   - task: CmdLine@2
     inputs:
       script: |
-        git clone https://github.com/sammyice/python-sample-vscode-flask-tutorial.git
-        # O usar token de GitHub para autenticar la descarga:
-        # git clone https://$(GH_TOKEN)@github.com/sammyice/python-sample-vscode-flask-tutorial.git
+        git clone https://$(GH_TOKEN)@github.com/sammyice/python-sample-vscode-flask-tutorial.git
     displayName: 'Hacer Checkout del repositorio en GitHub'
+    env:
+      GH_TOKEN: $(GH_TOKEN)  # Usar la variable secreta directamente en el entorno
 
   # Paso 2: Configurar Python
   - task: UsePythonVersion@0
