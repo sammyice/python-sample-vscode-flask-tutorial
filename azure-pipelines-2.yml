@@ -7,9 +7,9 @@ pool:
   name: 'Default'
 
 variables:
-  pythonVersion: '3.9'  # Cambiar a una versión comúnmente disponible
+  pythonVersion: '3.8'  # Cambiar a una versión comúnmente disponible
   requirementsFile: 'requirements.txt'
-  testFolder: 'tests/'  # Cambiar a un directorio de pruebas
+  testFolder: 'tests/'  # Directorio que contiene los tests
   testResultsFile: 'test-results.xml'
 
 steps:
@@ -17,12 +17,12 @@ steps:
   - task: CmdLine@2
     inputs:
       script: |
-        git clone -b main https://$(GH_TOKEN)@github.com/sammyice/python-sample-vscode-flask-tutorial.git
+        git clone https://$(GH_TOKEN)@github.com/your-username/your-python-repo.git
     displayName: 'Hacer Checkout del repositorio en GitHub'
     env:
       GH_TOKEN: $(GH_TOKEN)  # Usar la variable secreta directamente en el entorno
 
-  # Paso 2: Configurar Python con GitHub Token
+  # Paso 2: Configurar Python
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(pythonVersion)'
