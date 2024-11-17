@@ -4,7 +4,7 @@ trigger:
       - main
 
 pool:
-  vmImage: 'windows-latest'  # Usar un agente hospedado compatible (corrige "Default")
+  name: 'Default'
 
 variables:
   pythonVersion: '3.9'  # Cambiar a una versión comúnmente disponible
