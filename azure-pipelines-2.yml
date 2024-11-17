@@ -23,9 +23,9 @@ steps:
   # Paso 2: Configurar Python
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: 'Python 3.9.x'  # Asegúrate de usar una versión preinstalada
+      versionSpec: '$(pythonVersion)'
       addToPath: true
-    displayName: 'Configurar Python Python 3.9.x'
+    displayName: 'Configurar Python $(pythonVersion)'
 
   # Paso 3: Instalar dependencias
   - script: |
