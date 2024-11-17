@@ -4,29 +4,35 @@ trigger:
       - main
 
 pool:
-  name: 'Default'  # Usar un agente hospedado compatible
+  name: 'Default'  # Asegúrate de usar un agente compatible
 
 variables:
-  pythonVersion: '3.7'  # Cambiar a una versión comúnmente disponible
+  pythonVersion: '3.7'  # Ajusta la versión de Python si es necesario
   requirementsFile: 'requirements.txt'
   testFolder: 'test_test1.py'
   testResultsFile: 'test-results.xml'
+  GH_TOKEN: $(GH_TOKEN)  # Referencia la variable secreta GH_TOKEN
 
 steps:
-  # Paso 1: Verificar si el token de GitHub está disponible
-  - script: |
-      if [ -z "$GH_TOKEN" ]; then
-        echo "Error: La variable GH_TOKEN no está configurada. Verifica las variables secretas en tu pipeline.";
-        exit 1;
-      else
-        echo "El token GH_TOKEN está configurado correctamente.";
-      fi
-    displayName: 'Verificar la configuración del token GH_TOKEN'
-
-  # Paso 2: Clonar repositorio de GitHub con autenticación
-  - script: |
-      git clone https://$GH_TOKEN@github.com/sammyice/python-sample-vscode-flask-tutorial.git
+  # Paso 1: Clonar repositorio de GitHub
+  - task: CmdLine@2
+    inputs:
+      script: |
+        git clone https://github.com/sammyice/python-sample-vscode-flask-tutorial.git
     displayName: 'Hacer Checkout del repositorio en GitHub'
+
+  # Paso 2: Verificar la configuración del token GH_TOKEN
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        if (-not $env:GH_TOKEN) {
+          Write-Error "El token GH_TOKEN no está configurado."
+          exit 1  # Salir con un código de error
+        } else {
+          Write-Output "GH_TOKEN configurado correctamente."
+        }
+    displayName: 'Verificar la configuración del token GH_TOKEN'
 
   # Paso 3: Configurar Python
   - task: UsePythonVersion@0
@@ -34,7 +40,6 @@ steps:
       versionSpec: '$(pythonVersion)'
       addToPath: true
     displayName: 'Configurar Python $(pythonVersion)'
-    continueOnError: false  # Detener el pipeline si no encuentra la versión especificada
 
   # Paso 4: Instalar dependencias
   - script: |
