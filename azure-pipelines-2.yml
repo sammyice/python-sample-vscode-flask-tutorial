@@ -13,8 +13,11 @@ variables:
   testResultsFile: 'test-results.xml'
 
 steps:
-  - task: Checkout@1
-    displayName: 'Checkout del repositorio'
+  - task: CmdLine@2
+    inputs:
+      script: |
+        git clone https://github.com/sammyice/python-sample-vscode-flask-tutorial.git
+    displayName: 'Hacer Checkout del repositorio en GitHub'
 
 
   - task: UsePythonVersion@0
