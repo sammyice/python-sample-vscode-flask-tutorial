@@ -18,5 +18,4 @@ steps:
       echo "Building and testing the application"
       dotnet build
       dotnet test
-    displayName: 'Build and Test'
-    
+    displayName: 'Build and Test'    
