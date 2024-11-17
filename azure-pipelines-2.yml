@@ -21,19 +21,6 @@ steps:
         git clone https://github.com/sammyice/python-sample-vscode-flask-tutorial.git
     displayName: 'Hacer Checkout del repositorio en GitHub'
 
-  # Paso 2: Verificar la configuración del token GH_TOKEN
-  - task: PowerShell@2
-    inputs:
-      targetType: 'inline'
-      script: |
-        if (-not $env:GH_TOKEN) {
-          Write-Error "El token GH_TOKEN no está configurado."
-          exit 1  # Salir con un código de error
-        } else {
-          Write-Output "GH_TOKEN configurado correctamente."
-        }
-    displayName: 'Verificar la configuración del token GH_TOKEN'
-
   # Paso 3: Configurar Python
   - task: UsePythonVersion@0
     inputs:
