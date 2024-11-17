@@ -4,38 +4,42 @@ trigger:
       - main
 
 pool:
-  name: 'Default'
+  vmImage: 'windows-latest'  # Usar un agente hospedado compatible (corrige "Default")
 
 variables:
-  pythonVersion: '3.9.6'
+  pythonVersion: '3.9'  # Cambiar a una versión comúnmente disponible
   requirementsFile: 'requirements.txt'
   testFolder: 'test_test1.py'
   testResultsFile: 'test-results.xml'
 
 steps:
+  # Paso 1: Clonar repositorio de GitHub
   - task: CmdLine@2
     inputs:
       script: |
         git clone https://github.com/sammyice/python-sample-vscode-flask-tutorial.git
     displayName: 'Hacer Checkout del repositorio en GitHub'
 
-
+  # Paso 2: Configurar Python
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '$(pythonVersion)'
+      versionSpec: 'Python 3.9.x'  # Asegúrate de usar una versión preinstalada
       addToPath: true
-    displayName: 'Configurar Python $(pythonVersion)'
+    displayName: 'Configurar Python Python 3.9.x'
 
+  # Paso 3: Instalar dependencias
   - script: |
       python -m pip install --upgrade pip
       pip install -r $(requirementsFile)
     displayName: 'Instalar dependencias'
 
+  # Paso 4: Ejecutar pruebas unitarias
   - script: |
       echo "Ejecutando pruebas unitarias en $(testFolder)"
       pytest $(testFolder) --junitxml=$(testResultsFile)
     displayName: 'Ejecutar pruebas unitarias'
 
+  # Paso 5: Publicar resultados de pruebas
   - task: PublishTestResults@2
     inputs:
       testResultsFiles: '**/$(testResultsFile)'
