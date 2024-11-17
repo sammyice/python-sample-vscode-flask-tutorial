@@ -4,21 +4,26 @@ trigger:
       - main
 
 pool:
-  name: 'Default'  # Asegúrate de que este es el nombre correcto de tu pool
+  name: 'Default'  # Asegúrate de usar un agente compatible
+
+variables:
+  pythonVersion: '3.9'  # Usa una versión específica disponible en el agente
 
 steps:
+  # Paso 1: Mostrar el directorio de trabajo
   - script: echo $(Build.SourcesDirectory)
     displayName: 'Mostrar directorio de trabajo'
 
+  # Paso 2: Configurar Python
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.x'
+      versionSpec: '$(pythonVersion)'
       addToPath: true
-      architecture: 'x64'
-      installationPath: $(Agent.ToolsDirectory)/dotnet
-      
+    displayName: 'Configurar Python $(pythonVersion)'
+
+  # Paso 3: Build y Test
   - script: |
       echo "Building and testing the application"
       dotnet build
       dotnet test
-    displayName: 'Build and Test'    
+    displayName: 'Build and Test'
