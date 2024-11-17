@@ -13,7 +13,7 @@ variables:
   testResultsFile: 'test-results.xml'
 
 steps:
-  # Paso 1: Clonar repositorio de GitHub usando el token
+  # Paso 1: Clonar repositorio de GitHub
   - task: CmdLine@2
     inputs:
       script: |
@@ -22,7 +22,7 @@ steps:
     env:
       GH_TOKEN: $(GH_TOKEN)  # Usar la variable secreta directamente en el entorno
 
-  # Paso 2: Configurar Python
+  # Paso 2: Configurar Python con GitHub Token
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(pythonVersion)'
